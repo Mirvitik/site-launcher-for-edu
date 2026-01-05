@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-primary text-white text-center py-4 rounded-top-4">
+                    <h3 class="mb-0"><i class="bi bi-person-circle me-2"></i>Вход</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="/">
+                        <div class="form-floating mb-3">
+                            <input type="text"
+                                   class="form-control"
+                                   id="login"
+                                   name="login"
+                                   required>
+                            <label for="login">Логин</label>
+                        </div>
+
+                        <div class="form-floating mb-4">
+                            <input type="password"
+                                   class="form-control"
+                                   id="password"
+                                   name="password"
+                                   required>
+                            <label for="password">Пароль</label>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">Войти</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

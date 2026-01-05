@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Брошюра</title>
+    <link href="../static/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div align="center">
+    <b>Что такое SQL инъекция?</b>
+</div>
+<p>SQL инъекция-это уязвимость в веб-приложениях, которая позволяет злоумышленнику получить доступ к данным на сервере
+    через хитропостроенный</p>
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i> Пример кода сайта на flask с SQL уязвимостью
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
+<code>from data import db_session
+from data.users import User
+from flask import Flask, render_template, request
+import sqlite3
+
+app = Flask(__name__)
+
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == "POST":
+        login = request.form.get('login')
+        password = request.form.get('password')
+        con = sqlite3.connect('db/data.db')
+        cur = con.cursor()
+
+        # admin' OR '1'='1' --
+        query = f"SELECT * FROM users WHERE name = '{login}' AND hashed_password = '{password}'"
+
+        try:
+            cur.execute(query)
+            result = cur.fetchone()
+
+            if result:
+                return f"Добро пожаловать, {result[1]}!"
+            else:
+                return "Неверные логин или пароль"
+        except Exception as e:
+            return f"Ошибка: {str(e)}"
+        finally:
+            con.close()
+
+    return render_template('login.html')
+
+
+if __name__ == '__main__':
+    db_session.global_init("db/data.db")
+    user = User(name="admin", hashed_password="fjsdaghkjahie")
+    db_sess = db_session.create_session()
+    db_sess.add(user)
+    db_sess.commit()
+    db_sess.close()
+    app.run()
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+<p>Для избежания SQL инъекции в своих веб-приложениях необходимо сделать так, чтобы вводимые пользователем данные в форме
+    обрабатывались, как строки в SQL запросе, а не как часть запроса</p>
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i> Пример кода сайта на flask без SQL уязвимости
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
+<code>from data import db_session
+from data.users import User
+from flask import Flask, render_template, request
+import sqlite3
+
+app = Flask(__name__)@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == "POST":
+        login = request.form.get('login')
+        password = request.form.get('password')
+        con = sqlite3.connect('db/data.db')
+        cur = con.cursor()
+
+        query = "SELECT * FROM users WHERE name = ? AND hashed_password = ?"
+
+        try:
+            cur.execute(query, (login, password))
+            result = cur.fetchone()
+
+            if result:
+                return f"Добро пожаловать, {result[1]}!"
+            else:
+                return "Неверные логин или пароль"
+        except Exception as e:
+            return f"Ошибка: {str(e)}"
+        finally:
+            con.close()
+
+    return render_template('login.html')
+
+
+if __name__ == '__main__':
+    db_session.global_init("db/data.db")
+    user = User(name="admin", hashed_password="fjsdaghkjahie")
+    db_sess = db_session.create_session()
+    db_sess.add(user)
+    db_sess.commit()
+    db_sess.close()
+    app.run()
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+</body>
+</html>

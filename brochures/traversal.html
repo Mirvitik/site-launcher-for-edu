@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Брошюра</title>
+    <link href="../static/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div align="center">
+    <b>Что такое Directory Traversal?</b>
+</div>
+<p>Directory Traversal (обход каталога)-это уязвимость в веб-приложениях, которая даёт злоумышленнику возможность
+    просматривать файлы на сервере, которые не должны быть доступны для просмотра</p>
+<br>
+<p>Для большего понимания давайте создадим сайт, который по определённому url будет возвращать нам файл</p>
+<p>В коде ниже представлен пример сайта на flask. По коду можно понять, что сервер отправляет любой файл, путь до
+    которого
+    написан в url</p>
+<p>Например, обратившись по url /download?file=server.py, злоумышленник может получить доступ к бэкенду нашего сервера,
+    что увеличит риски безопасности</p>
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i>Пример кода сайта на flask с уязвимостью Directory Traversal
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3">
+<code>from flask import Flask, request, send_file, render_template
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    images = ['cat.jpg', 'cat2.jpg', 'cat3.jpg']
+    return render_template('traversal.html', title='Сайт для скачивания файлов', images=images)
+
+
+@app.route('/download')
+def download_file():
+    filename = request.args.get('file')
+
+    return send_file(filename, as_attachment=True)
+
+
+if __name__ == "__main__":
+    app.run()
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+<p>Для исправления этой уязвимости можно было бы проверять путь до файла, который вводит пользователь на безопасность.
+    Но смысл это делать, когда в flask есть уже встроенная функция, которая будет возвращать файлы только из
+    определённой папки. Эта функция-send_from_directory</p>
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i>Пример кода сайта на flask без уязвимости Directory Traversal
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3">
+<code>from flask import Flask, request, send_from_directory, render_template
+
+app = Flask(__name__)
+
+
+@app.route('/')
+def index():
+    images = ['cat.jpg', 'cat2.jpg', 'cat3.jpg']
+    return render_template('traversal.html', title='Сайт для скачивания файлов', images=images)
+
+
+@app.route('/download')
+def download_file():
+    filename = request.args.get('file')
+
+    return send_from_directory('static', filename, as_attachment=True)
+
+
+if __name__ == "__main__":
+    app.run()
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+<p>В других современных фреймворках тоже есть встроенные механизмы защиты от данной уязвимости, про которые просто не стоит забывать разработчикам</p>
+</body>
+</html>
