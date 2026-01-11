@@ -8,12 +8,12 @@ import sqlite3
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
-        login = request.form.get('login')
-        password = request.form.get('password')
-        con = sqlite3.connect('db/data.db')
+        login = request.form.get("login")
+        password = request.form.get("password")
+        con = sqlite3.connect("db/data.db")
         cur = con.cursor()
 
         # admin' OR '1'='1' --
@@ -32,12 +32,12 @@ def index():
         finally:
             con.close()
 
-    return render_template('login.html')
+    return render_template("login.html")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     db_session.global_init("db/data.db")
-    con = sqlite3.connect('db/data.db')
+    con = sqlite3.connect("db/data.db")
     cur = con.cursor()
     if cur.execute('''SELECT * FROM users WHERE name="admin"''').fetchone() is None:
         user = User(name="admin", hashed_password="admin")

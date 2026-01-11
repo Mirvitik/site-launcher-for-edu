@@ -58,10 +58,16 @@ class Ui_MainWindow(object):
         self.label_2.setText(_translate("MainWindow", "Создать сайт с"))
         self.radiosqlinjection.setText(_translate("MainWindow", "SQL injection"))
         self.radioButton.setText(_translate("MainWindow", "Command injection (OS)"))
-        self.radioButton_2.setText(_translate("MainWindow", "Directory Traversal (LFI/RFI)"))
-        self.radioButton_3.setText(_translate("MainWindow", "Broken Access Control (IDOR)"))
+        self.radioButton_2.setText(
+            _translate("MainWindow", "Directory Traversal (LFI/RFI)")
+        )
+        self.radioButton_3.setText(
+            _translate("MainWindow", "Broken Access Control (IDOR)")
+        )
         self.label.setText(_translate("MainWindow", "Сделайте что-нибудь"))
-        self.checkBox.setText(_translate("MainWindow", "Показать документацию брошюру по уязвимости"))
-        self.pushButton.setText(_translate("MainWindow", "Запустить сервер"))
+        self.checkBox.setText(
+            _translate("MainWindow", "Показать брошюру по уязвимости")
+        )
+        self.pushButton.setText(_translate("MainWindow", "Запустить сайт"))
         self.label_3.setText(_translate("MainWindow", "TextLabel"))
         self.label_4.setText(_translate("MainWindow", "Изменение порта сайта"))

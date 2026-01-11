@@ -9,9 +9,9 @@ from PyQt6.QtWidgets import QWidget, QVBoxLayout
 class HTMLBrochureViewer(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('Брошюра')
-        self.image = QPixmap('media/image.png')
-        self.setWindowIcon(QIcon('media/img.png'))
+        self.setWindowTitle("Брошюра")
+        self.image = QPixmap("media/image.png")
+        self.setWindowIcon(QIcon("media/img.png"))
         self.layout = QVBoxLayout()
         self.browser = QWebEngineView()
         self.layout.addWidget(self.browser)

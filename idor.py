@@ -9,40 +9,41 @@ from data.users import User
 app = Flask(__name__)
 
 
-@app.route('/', methods=['GET'])
+@app.route("/", methods=["GET"])
 def index():
-    con = sqlite3.connect('db/data.db')
+    con = sqlite3.connect("db/data.db")
     cur = con.cursor()
-    query = '''SELECT * FROM users'''
+    query = """SELECT * FROM users"""
     users = cur.execute(query).fetchall()
     con.close()
-    return render_template('idor.html', users=users)
+    return render_template("idor.html", users=users)
 
 
-@app.route('/user/<int:id>', methods=['GET'])
+@app.route("/user/<int:id>", methods=["GET"])
 def get_user(id):
-    con = sqlite3.connect('db/data.db')
+    con = sqlite3.connect("db/data.db")
     cur = con.cursor()
-    query = '''SELECT * FROM users WHERE users.id = ?'''
+    query = """SELECT * FROM users WHERE users.id = ?"""
     user = cur.execute(query, (id,)).fetchone()
     con.close()
-    return render_template('idor_user.html', id=user[0], username=user[1], about=user[3],
-                           email=user[2])
+    return render_template(
+        "idor_user.html", id=user[0], username=user[1], about=user[3], email=user[2]
+    )
 
 
-@app.route('/api/user/<id>')
+@app.route("/api/user/<id>")
 def api_user(id):
-    con = sqlite3.connect('db/data.db')
+    con = sqlite3.connect("db/data.db")
     cur = con.cursor()
-    query = '''SELECT * FROM users WHERE users.id = ?'''
+    query = """SELECT * FROM users WHERE users.id = ?"""
     user = cur.execute(query, (id,)).fetchone()
     con.close()
     return jsonify(user)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     db_session.global_init("db/data.db")
-    con = sqlite3.connect('db/data.db')
+    con = sqlite3.connect("db/data.db")
     cur = con.cursor()
     if cur.execute('''SELECT * FROM users WHERE name="testuser"''').fetchone() is None:
         user = User(name="testuser", hashed_password="testuser")

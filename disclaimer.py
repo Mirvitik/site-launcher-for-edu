@@ -53,11 +53,12 @@ class DisclaimerDialog(QMessageBox):
         self.setTextFormat(Qt.TextFormat.RichText)
 
         self.setStandardButtons(
-            QMessageBox.StandardButton.Yes |
-            QMessageBox.StandardButton.No
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
 
-        self.button(QMessageBox.StandardButton.Yes).setText("Я согласен и принимаю условия")
+        self.button(QMessageBox.StandardButton.Yes).setText(
+            "Я согласен и принимаю условия"
+        )
         self.button(QMessageBox.StandardButton.No).setText("Отказаться и выйти")
 
         self.setIcon(QMessageBox.Icon.Warning)

@@ -23,7 +23,7 @@ def global_init(db_file):
     if db_dir and not os.path.exists(db_dir):
         os.makedirs(db_dir)
 
-    conn_str = f'sqlite:///{db_file.strip()}?check_same_thread=False'
+    conn_str = f"sqlite:///{db_file.strip()}?check_same_thread=False"
 
     print(f"Подключение к базе данных {conn_str}")
 

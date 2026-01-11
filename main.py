@@ -12,18 +12,18 @@ import json
 class MainWindow(QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        with open('data.json') as f:
+        with open("data.json") as f:
             try:
                 data = json.load(f)
             except Exception:
                 f.write('{"attention": true}')
-        if data['attention']:
+        if data["attention"]:
             self.showDisclaimer()
         self.setupUi(self)
-        self.image = QPixmap('media/image.png')
+        self.image = QPixmap("media/image.png")
         self.label_3.setPixmap(self.image)
-        self.setWindowTitle('Генерация сайта с уязвимостью')
-        self.setWindowIcon(QIcon('media/img.png'))
+        self.setWindowTitle("Генерация сайта с уязвимостью")
+        self.setWindowIcon(QIcon("media/img.png"))
         self.pushButton.clicked.connect(self.runserver)
         self.checkBox.setChecked(True)
         self.spinBox.setMinimum(1)
@@ -41,50 +41,62 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if not result == QMessageBox.StandardButton.Yes:
             sys.exit(0)
         else:
-            with open('data.json') as f:
+            with open("data.json") as f:
                 data = json.load(f)
-            with open('data.json', 'w') as f:
-                data['attention'] = False
+            with open("data.json", "w") as f:
+                data["attention"] = False
                 f.write(json.dumps(data))
 
     def runserver(self):
         if self.server is not None:
-            self.pushButton.setText('Включить сервер')
+            self.pushButton.setText("Запустить сайт")
             self.server.terminate()
             self.server = None
         else:
-            self.pushButton.setText('Выключить сервер')
+            self.pushButton.setText("Выключить сайт")
             if self.radiosqlinjection.isChecked():
                 self.label.setText(
-                    f'Сайт доступен по <a href="http://127.0.0.1:{self.spinBox.value()}">http://127.0.0.1:{self.spinBox.value()}</a>')
-                self.server = Popen([sys.executable, 'server.py', f'{self.spinBox.value()}'])
+                    f'Сайт доступен по <a href="http://127.0.0.1:{self.spinBox.value()}">http://127.0.0.1:{self.spinBox.value()}</a>'
+                )
+                self.server = Popen(
+                    [sys.executable, "server.py", f"{self.spinBox.value()}"]
+                )
                 if self.checkBox.isChecked():
                     self.browser = HTMLBrochureViewer()
-                    self.browser.show_vulnerability('sqlinjection')
+                    self.browser.show_vulnerability("sqlinjection")
             elif self.radioButton_2.isChecked():
                 self.label.setText(
-                    f'Сайт доступен по <a href="http://127.0.0.1:{self.spinBox.value()}">http://127.0.0.1:{self.spinBox.value()}</a>')
-                self.server = Popen([sys.executable, 'traversal.py', f'{self.spinBox.value()}'])
+                    f'Сайт доступен по <a href="http://127.0.0.1:{self.spinBox.value()}">http://127.0.0.1:{self.spinBox.value()}</a>'
+                )
+                self.server = Popen(
+                    [sys.executable, "traversal.py", f"{self.spinBox.value()}"]
+                )
                 if self.checkBox.isChecked():
                     self.browser = HTMLBrochureViewer()
-                    self.browser.show_vulnerability('traversal')
+                    self.browser.show_vulnerability("traversal")
             elif self.radioButton.isChecked():
                 self.label.setText(
-                    f'Сайт доступен по <a href="http://127.0.0.1:{self.spinBox.value()}">http://127.0.0.1:{self.spinBox.value()}</a>')
-                self.server = Popen([sys.executable, 'oscommand.py', f'{self.spinBox.value()}'])
+                    f'Сайт доступен по <a href="http://127.0.0.1:{self.spinBox.value()}">http://127.0.0.1:{self.spinBox.value()}</a>'
+                )
+                self.server = Popen(
+                    [sys.executable, "oscommand.py", f"{self.spinBox.value()}"]
+                )
                 if self.checkBox.isChecked():
                     self.browser = HTMLBrochureViewer()
-                    self.browser.show_vulnerability('oscommand')
+                    self.browser.show_vulnerability("oscommand")
             elif self.radioButton_3.isChecked():
                 self.label.setText(
-                    f'Сайт доступен по <a href="http://127.0.0.1:{self.spinBox.value()}">http://127.0.0.1:{self.spinBox.value()}</a>')
-                self.server = Popen([sys.executable, 'idor.py', f'{self.spinBox.value()}'])
+                    f'Сайт доступен по <a href="http://127.0.0.1:{self.spinBox.value()}">http://127.0.0.1:{self.spinBox.value()}</a>'
+                )
+                self.server = Popen(
+                    [sys.executable, "idor.py", f"{self.spinBox.value()}"]
+                )
                 if self.checkBox.isChecked():
                     self.browser = HTMLBrochureViewer()
-                    self.browser.show_vulnerability('idor')
+                    self.browser.show_vulnerability("idor")
             else:
-                self.label.setText('Выберите тип уязвимости')
-                self.pushButton.setText('Включить сервер')
+                self.label.setText("Выберите тип уязвимости")
+                self.pushButton.setText("Запустить сайт")
 
     def stop(self):
         if self.server is not None:
@@ -101,7 +113,7 @@ def except_hook(cls, exception, traceback):
 
 sys.excepthook = except_hook
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyleSheet("""QMainWindow { background-color: black; } """)
     window = MainWindow()

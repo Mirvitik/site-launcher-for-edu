@@ -5,15 +5,17 @@ from flask import Flask, request, send_file, render_template
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route("/")
 def index():
-    images = ['cat.jpg', 'cat2.jpg', 'cat3.jpg']
-    return render_template('traversal.html', title='Сайт для скачивания файлов', images=images)
+    images = ["cat.jpg", "cat2.jpg", "cat3.jpg"]
+    return render_template(
+        "traversal.html", title="Сайт для скачивания файлов", images=images
+    )
 
 
-@app.route('/download')
+@app.route("/download")
 def download_file():
-    filename = request.args.get('file')
+    filename = request.args.get("file")
 
     return send_file(filename, as_attachment=True)
 
