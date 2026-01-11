@@ -119,12 +119,21 @@ class User(SqlAlchemyBase):
         </div>
         <div class="card-body bg-dark text-light p-0">
             <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
-<code>
+<code>import datetime
+import uuid
+import sqlalchemy
+from .db_session import SqlAlchemyBase
+
 class User(SqlAlchemyBase):
     __tablename__ = 'users'
 
-    id = sqlalchemy.Column(sqlalchemy.Integer,
-                           primary_key=True, autoincrement=True)
+     id = sqlalchemy.Column(
+        sqlalchemy.String(36),
+        primary_key=True,
+        default=lambda: str(uuid.uuid4()),
+        unique=True,
+        nullable=False
+    )
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
     about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     email = sqlalchemy.Column(sqlalchemy.String,
@@ -138,5 +147,65 @@ class User(SqlAlchemyBase):
         </div>
     </div>
 </div>
+
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i> Пример кода сайта на flask без IDOR уязвимости
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
+<code>import sys
+
+from data import db_session
+from flask import Flask, render_template, jsonify
+import sqlite3
+
+from data.users import User
+
+app = Flask(__name__)
+
+
+@app.route("/", methods=["GET"])
+def index():
+    con = sqlite3.connect("db/data.db")
+    cur = con.cursor()
+    query = """SELECT * FROM users"""
+    users = cur.execute(query).fetchall()
+    con.close()
+    return render_template("idor.html", users=users)
+
+
+@app.route("/user/&lt;int:id&gt;", methods=["GET"])
+def get_user(id):
+    con = sqlite3.connect("db/data.db")
+    cur = con.cursor()
+    query = """SELECT * FROM users WHERE users.id = ?"""
+    user = cur.execute(query, (id,)).fetchone()
+    con.close()
+    return render_template(
+        "idor_user.html", id=user[0], username=user[1], about=user[3], email=user[2]
+    )
+
+
+@app.route("/api/user/&lt;id&gt;")
+def api_user(id):
+    con = sqlite3.connect("db/data.db")
+    cur = con.cursor()
+    query = """SELECT id, name, about FROM users WHERE users.id = ?"""
+    user = cur.execute(query, (id,)).fetchone()
+    con.close()
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+<p>В исправленном примере мы добавили UUID вместо обычного числового ID, так как UUID представляет собой случайную строку, злоумышленник не сможет узнать примерное количество пользователей в сервисе</p>
+<p>Также в нашем API мы не выдаём конфиденциальную информацию пользователей (хэш пароля и дата регистрации)</p>
 </body>
 </html>
