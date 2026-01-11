@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg border-0">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="fas fa-user-circle me-2"></i>Профиль пользователя
+                        </h4>
+                        <span class="badge bg-light text-primary fs-6">ID: {{ id }}</span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div class="row align-items-center mb-4">
+                        <div class="col-auto">
+                            <div class="avatar-circle bg-primary text-white d-flex align-items-center justify-content-center"
+                                 style="width: 80px; height: 80px; border-radius: 50%; font-size: 2rem;">
+                                {{ username[0]|upper if username else '?' }}
+                            </div>
+                        </div>
+                        <div class="col">
+                            <h2 class="card-title mb-1">{{ username }}</h2>
+                        </div>
+                    </div>
+
+                    <hr class="my-4">
+
+                    {% if email is not none %}
+                    <div class="mb-3">
+                        <h6 class="text-uppercase text-muted mb-2">
+                            <i class="fas fa-envelope me-2"></i>Контактная информация
+                        </h6>
+                        <div class="d-flex align-items-center p-3 bg-light rounded">
+                            <i class="fas fa-at text-primary me-3 fs-5"></i>
+                            <div>
+                                <p class="mb-0 fw-bold">{{ email }}</p>
+                                <small class="text-muted">Основной email адрес</small>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    {% if about is not none %}
+                    <div class="mt-4">
+                        <h6 class="text-uppercase text-muted mb-3">
+                            <i class="fas fa-info-circle me-2"></i>О себе
+                        </h6>
+                        <div class="p-4 bg-light rounded">
+                            <p class="mb-0" style="white-space: pre-line;">{{ about }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

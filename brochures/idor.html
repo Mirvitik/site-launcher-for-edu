@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Брошюра</title>
+    <link href="../static/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div align="center">
+    <b>Что такое IDOR уязвимость?</b>
+</div>
+<p>Broken Access Control (IDOR)-это тип уязвимости в веб-приложениях, при котором пользователь имеет возможность
+    просмтаривать те данные, которые ему не следовало просматривать</p>
+<p>Давайте рассмотрим уязвимый код для большего понимания</p>
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i> Пример кода сайта на flask с IDOR уязвимостью
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
+<code>import sys
+
+from data import db_session
+from flask import Flask, render_template, jsonify
+import sqlite3
+
+from data.users import User
+
+app = Flask(__name__)
+
+
+@app.route('/', methods=['GET'])
+def index():
+    con = sqlite3.connect('db/data.db')
+    cur = con.cursor()
+    query = '''SELECT * FROM users'''
+    users = cur.execute(query).fetchall()
+    con.close()
+    return render_template('idor.html', users=users)
+
+
+@app.route('/user/&lt;int:id&gt;', methods=['GET'])
+def get_user(id):
+    con = sqlite3.connect('db/data.db')
+    cur = con.cursor()
+    query = '''SELECT * FROM users WHERE users.id = ?'''
+    user = cur.execute(query, (id,)).fetchone()
+    con.close()
+    return render_template('idor_user.html', id=user[0], username=user[1], about=user[3],
+                           email=user[2])
+
+
+@app.route('/api/user/&lt;id&gt')
+def api_user(id):
+    con = sqlite3.connect('db/data.db')
+    cur = con.cursor()
+    query = '''SELECT * FROM users WHERE users.id = ?'''
+    user = cur.execute(query, (id,)).fetchone()
+    con.close()
+    return jsonify(user)
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+<p>Для большей наглядности посмотрим, как выглядит ORM модель пользователя в базе</p>
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i> Модель пользователя
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
+<code>
+class User(SqlAlchemyBase):
+    __tablename__ = 'users'
+
+    id = sqlalchemy.Column(sqlalchemy.Integer,
+                           primary_key=True, autoincrement=True)
+    name = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
+    about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    email = sqlalchemy.Column(sqlalchemy.String,
+                              index=True, unique=True, nullable=True)
+    hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                     default=datetime.datetime.now)
+
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+<p>Во-первых, в приведённом выше коде используются обычные числовые ID для пользователей, что поможет злоумышленнику
+    понять количество пользователей, зарегистрированных на сервисе, а также понять примерное время регистрации каждого
+    пользователя</p>
+<p>Во-вторых, в API сайта возвращаются все поля пользователя и не используется API-ключ. Это позволяет злоумышленнику
+    получить обширную информацию о пользователе: хэш пароля, дата регистрации и тд.</p>
+<p>Для понимания, как решить данные проблемы рассмотрим исправленный код:</p>
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i> Модель пользователя
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
+<code>
+class User(SqlAlchemyBase):
+    __tablename__ = 'users'
+
+    id = sqlalchemy.Column(sqlalchemy.Integer,
+                           primary_key=True, autoincrement=True)
+    name = sqlalchemy.Column(sqlalchemy.String, nullable=True, unique=True)
+    about = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    email = sqlalchemy.Column(sqlalchemy.String,
+                              index=True, unique=True, nullable=True)
+    hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
+                                     default=datetime.datetime.now)
+
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+</body>
+</html>

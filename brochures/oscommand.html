@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Брошюра</title>
+    <link href="../static/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div align="center">
+    <b>Что такое OS command injection?</b>
+</div>
+<p>OS command injection-это уязвимость в веб-приложениях, которая позволяет злоумышленнику выполнить какую-нибудь
+    программу через терминал из-за плохо продуманной обработки данных со стороны сервера</p>
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i> Пример кода сайта на flask с OS command injection
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3">
+<code>import subprocess
+import sys
+
+from flask import Flask, request, render_template, redirect
+import os
+
+app = Flask(__name__)
+
+
+# http://127.0.0.1:5000/?host=8.8.8.8%26cd
+@app.route('/', methods=['GET', 'POST'])
+def unsafe_ping():
+    if request.method == 'POST':
+        host = request.form.get('host')
+        return redirect(f'/?host={host}')
+
+    host = request.args.get('host', '127.0.0.1')
+
+    if os.name == "nt":
+        command = ' '.join(["ping", "-n", "1", host])
+    else:
+        command = ' '.join(["ping", "-c", "1", host])
+
+    try:
+        result = subprocess.run(
+            command,
+            capture_output=True,
+            text=True,
+            timeout=5,
+            shell=True,
+            encoding='cp866',
+        )
+
+        output = f"""
+                <h3>Результат выполнения команды:</h3>
+                <pre>Команда: {command}</pre>
+                <h4>Вывод:</h4>
+                <pre>{result.stdout if result.stdout else 'Нет вывода'}</pre>
+                """
+
+        if result.stderr:
+            output += f"<h4>Ошибки:</h4><pre>{result.stderr}</pre>"
+
+        output += f"<p>Код возврата: {result.returncode}</p>"
+
+        return render_template('oscommand.html', errors=result.stderr, code=result.returncode, command=command,
+                               res=result.stdout if result.stdout else 'Нет вывода', )
+
+    except subprocess.TimeoutExpired:
+        return "Ошибка: команда превысила время выполнения (5 секунд)"
+    except Exception as e:
+        return f"Ошибка выполнения: {str(e)}"
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+<p>По коду сверху можно понять, что пользователь на уязвимом сайте вводит тот IP адрес, к которому пользователь хочет
+    применить команду ping. IP адрес хранится в параметре host в url. Сервер просто берёт значение host, подставляет
+    значение host к команде ping и выполняет консольную команду, а результат выполнения выводится на экран пользователя.
+    Злоумышленник может ввести в параметр url какую-нибудь ещё команду и узнать побольше о нашем сервисе. Например,
+    введя url http://127.0.0.1:5000/?host=8.8.8.8%26cd, злоумышленник получит результат выполнения команды ping и
+    текущую директорию</p>
+<div class="container mt-5">
+    <div class="card border-primary shadow">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-filetype-py"></i> Пример кода сайта на flask без SQL уязвимости
+            </h5>
+            <button class="btn btn-sm btn-light" onclick="copyCode(this)">
+                Копировать
+            </button>
+        </div>
+        <div class="card-body bg-dark text-light p-0">
+            <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
+<code>from data import db_session
+from data.users import User
+from flask import Flask, render_template, request
+import sqlite3
+
+app = Flask(__name__)@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == "POST":
+        login = request.form.get('login')
+        password = request.form.get('password')
+        con = sqlite3.connect('db/data.db')
+        cur = con.cursor()
+
+        query = "SELECT * FROM users WHERE name = ? AND hashed_password = ?"
+
+        try:
+            cur.execute(query, (login, password))
+            result = cur.fetchone()
+
+            if result:
+                return f"Добро пожаловать, {result[1]}!"
+            else:
+                return "Неверные логин или пароль"
+        except Exception as e:
+            return f"Ошибка: {str(e)}"
+        finally:
+            con.close()
+
+    return render_template('login.html')
+
+
+if __name__ == '__main__':
+    db_session.global_init("db/data.db")
+    user = User(name="admin", hashed_password="fjsdaghkjahie")
+    db_sess = db_session.create_session()
+    db_sess.add(user)
+    db_sess.commit()
+    db_sess.close()
+    app.run()
+</code>
+            </pre>
+        </div>
+    </div>
+</div>
+</body>
+</html>

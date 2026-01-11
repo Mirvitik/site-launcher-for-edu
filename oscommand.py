@@ -1,89 +1,57 @@
-from subprocess import Popen
-from flask import Flask, request, render_template_string
+import subprocess
+import sys
+
+from flask import Flask, request, render_template, redirect
+import os
 
 app = Flask(__name__)
 
-HTML_TEMPLATE = '''
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Ping Utility</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h2>🔧 System Ping Utility</h2>
-        </div>
-        <div class="card-body">
-            <form method="POST">
-                <div class="mb-3">
-                    <label class="form-label">Enter IP or hostname to ping:</label>
-                    <input type="text" name="host" class="form-control" 
-                           placeholder="example.com or 8.8.8.8" 
-                           value="{{ request.form.host if request.form.host else '' }}">
-                </div>
-                <button type="submit" class="btn btn-primary">Ping</button>
-            </form>
 
-            {% if result %}
-            <hr>
-            <h5>Results:</h5>
-            <div class="alert alert-info">
-                <pre style="background: #f8f9fa; padding: 10px; border-radius: 5px;">{{ result }}</pre>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-</body>
-</html>
-'''
+# http://127.0.0.1:5000/?host=8.8.8.8%26cd
+@app.route('/', methods=['GET', 'POST'])
+def unsafe_ping():
+    if request.method == 'POST':
+        host = request.form.get('host')
+        return redirect(f'/?host={host}')
 
+    host = request.args.get('host', '127.0.0.1')
 
-def safe_ping(hostname, count=4):
-    """Безопасное выполнение ping с учетом ОС"""
-
-    # Определяем ОС
-    system = platform.system().lower()
+    if os.name == "nt":
+        command = ' '.join(["ping", "-n", "1", host])
+    else:
+        command = ' '.join(["ping", "-c", "1", host])
 
     try:
-        if system == "windows":
-            # Для Windows
-            command = ["ping", "-n", str(count), hostname]
-        else:
-            # Для Linux/Mac
-            command = ["ping", "-c", str(count), hostname]
-
-        # Выполняем команду
         result = subprocess.run(
             command,
             capture_output=True,
             text=True,
-            timeout=10,
-            shell=False
+            timeout=5,
+            shell=True,
+            encoding='cp866',
         )
 
-        return result.stdout if result.returncode == 0 else result.stderr
+        output = f"""
+                <h3>Результат выполнения команды:</h3>
+                <pre>Команда: {command}</pre>
+                <h4>Вывод:</h4>
+                <pre>{result.stdout if result.stdout else 'Нет вывода'}</pre>
+                """
 
+        if result.stderr:
+            output += f"<h4>Ошибки:</h4><pre>{result.stderr}</pre>"
+
+        output += f"<p>Код возврата: {result.returncode}</p>"
+
+        return render_template('oscommand.html', errors=result.stderr, code=result.returncode, command=command,
+                               res=result.stdout if result.stdout else 'Нет вывода', )
+
+    except subprocess.TimeoutExpired:
+        return "Ошибка: команда превысила время выполнения (5 секунд)"
     except Exception as e:
-        return f"Error: {str(e)}"
+        return f"Ошибка выполнения: {str(e)}"
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    # ... остальной код остается прежним ...
-
-    if request.method == 'POST':
-        host = request.form.get('host', '').strip()
-
-        if host:
-            try:
-                # ✅ Используем безопасную функцию
-                output = safe_ping(host, count=4)
-                result = output
-            except Exception as e:
-                error = f"Error: {str(e)}"
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 5000
+    app.run(port=port)

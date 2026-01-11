@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="header-container">
+    <div class="container">
+        <div class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+            <div class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+                <span class="fs-4 ms-2">Сверхкрутая соцсеть</span>
+                <li class="nav-item d-flex align-items-center">
+                    <button id="theme-toggle" class="theme-toggle nav-link" aria-label="Переключить тему">
+                        <span class="theme-icon"></span>
+                    </button>
+                </li>
+            </div>
+
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Главная</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/api/v1/" class="nav-link">Наш API</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div align="center">
+    <strong>Наши пользователи:</strong>
+</div>
+<div class="row">
+    {% for user in users %}
+    <div class="col-sm-6">
+        <div class="card" style="width: 18rem;">
+            <p>ID: {{ user[0] }}</p>
+            <p>Никнейм: <strong>{{ user[1] }}</strong></p>
+            <p>{{ user[6] }}</p>
+            <a href="/user/{{user[0]}}" class="btn btn-info">Подробнее</a>
+        </div>
+        <br>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

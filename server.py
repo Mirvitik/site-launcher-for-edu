@@ -1,3 +1,5 @@
+import sys
+
 from data import db_session
 from data.users import User
 from flask import Flask, render_template, request
@@ -35,9 +37,14 @@ def index():
 
 if __name__ == '__main__':
     db_session.global_init("db/data.db")
-    user = User(name="admin", hashed_password="admin")
-    db_sess = db_session.create_session()
-    db_sess.add(user)
-    db_sess.commit()
-    db_sess.close()
-    app.run()
+    con = sqlite3.connect('db/data.db')
+    cur = con.cursor()
+    if cur.execute('''SELECT * FROM users WHERE name="admin"''').fetchone() is None:
+        user = User(name="admin", hashed_password="admin")
+        db_sess = db_session.create_session()
+        db_sess.add(user)
+        db_sess.commit()
+        db_sess.close()
+    con.close()
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else 5000
+    app.run(port=port)
