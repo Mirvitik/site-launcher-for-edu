@@ -3,11 +3,9 @@ import sys
 from data import db_session
 from data.users import User
 from flask import Flask, render_template, request
-from flask_ngrok import run_with_ngrok
 import sqlite3
 
 app = Flask(__name__)
-run_with_ngrok(app)
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -49,4 +47,4 @@ if __name__ == "__main__":
         db_sess.close()
     con.close()
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 5000
-    app.run()
+    app.run(port=port)
