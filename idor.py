@@ -31,6 +31,11 @@ def get_user(id):
     )
 
 
+@app.route("/api/v1/")
+def api_of_user():
+    return render_template('about_api.html')
+
+
 @app.route("/api/user/<id>")
 def api_user(id):
     con = sqlite3.connect("db/data.db")

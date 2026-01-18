@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация User API</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <header>
+        <p align="center">Документация для работы с API</p>
+
+    </header>
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <div class="sticky-top" style="top: 20px;">
+                <div class="card mt-3">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">Технологии</h5>
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled mb-0">
+                            <li><span class="badge bg-primary">Flask</span> Python Backend</li>
+                            <li><span class="badge bg-success">SQLite</span> База данных</li>
+                            <li><span class="badge bg-warning text-dark">SQLAlchemy</span> ORM система</li>
+                            <li><span class="badge bg-dark">JSON</span> Формат данных</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-9">
+            <section id="endpoint" class="mb-5">
+                <h2 class="mb-4 border-bottom pb-2">Эндпоинт API</h2>
+
+                <div class="card endpoint-card mb-4">
+                    <div class="card-header d-flex align-items-center">
+                        <span class="badge bg-success method-badge me-3">GET</span>
+                        <h5 class="mb-0">/api/user/&lt;id&gt;</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Возвращает информацию о пользователе по указанному ID. Если пользователь с
+                            таким ID не найден, возвращается <code>null</code>.</p>
+
+                        <h6 class="mt-4">Параметры запроса</h6>
+                        <div class="table-responsive">
+                            <table class="table table-bordered param-table">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Параметр</th>
+                                    <th>Тип</th>
+                                    <th>Обязательный</th>
+                                    <th>Описание</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><code>id</code></td>
+                                    <td>Integer</td>
+                                    <td><span class="badge bg-danger">Да</span></td>
+                                    <td>Уникальный идентификатор пользователя</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <h6 class="mt-4">Пример запроса</h6>
+                        <div class="code-block mb-3">
+                            <span style="color: #6c757d;"># Получение пользователя с ID=42</span><br>
+                            GET /api/user/42<br>
+                            Host: example.com<br>
+                            Accept: application/json
+                        </div>
+
+                        <h6 class="mt-4">Пример ответа</h6>
+                        <div class="code-block">
+                            {<br>
+                            &nbsp;&nbsp;"id": 42,<br>
+                            &nbsp;&nbsp;"name": "Иван Петров",<br>
+                            &nbsp;&nbsp;"about": "Разработчик ПО с 5-летним опытом",<br>
+                            &nbsp;&nbsp;"email": "ivan@example.com",<br>
+                            &nbsp;&nbsp;"hashed_password": "password",<br>
+                            &nbsp;&nbsp;"created_date": "2023-10-15T14:32:10"<br>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="model" class="mb-5">
+                <h2 class="mb-4 border-bottom pb-2">Модель данных User</h2>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">Структура таблицы "users"</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>Таблица содержит информацию о зарегистрированных пользователях системы:</p>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Поле</th>
+                                    <th>Тип данных</th>
+                                    <th>Описание</th>
+                                    <th>Ограничения</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><code>id</code></td>
+                                    <td>Integer</td>
+                                    <td>Уникальный идентификатор</td>
+                                    <td>Primary Key, Auto Increment</td>
+                                </tr>
+                                <tr>
+                                    <td><code>name</code></td>
+                                    <td>String</td>
+                                    <td>Имя пользователя</td>
+                                    <td>Unique, Nullable</td>
+                                </tr>
+                                <tr>
+                                    <td><code>about</code></td>
+                                    <td>String</td>
+                                    <td>Информация о пользователе</td>
+                                    <td>Nullable</td>
+                                </tr>
+                                <tr>
+                                    <td><code>email</code></td>
+                                    <td>String</td>
+                                    <td>Адрес электронной почты</td>
+                                    <td>Index, Unique, Nullable</td>
+                                </tr>
+                                <tr>
+                                    <td><code>hashed_password</code></td>
+                                    <td>String</td>
+                                    <td>Хэшированный пароль</td>
+                                    <td>Nullable</td>
+                                </tr>
+                                <tr>
+                                    <td><code>created_date</code></td>
+                                    <td>DateTime</td>
+                                    <td>Дата регистрации</td>
+                                    <td>Default: текущая дата</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
