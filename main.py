@@ -115,7 +115,9 @@ sys.excepthook = except_hook
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyleSheet("""QMainWindow { background-color: black; } """)
+    app.setStyleSheet(
+        """QMainWindow { background-color: black; } QWidget { color: white; }"""
+    )
     window = MainWindow()
     window.setFixedSize(window.width(), window.height())
     window.show()

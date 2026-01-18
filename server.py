@@ -15,14 +15,14 @@ def index():
         password = request.form.get("password")
         con = sqlite3.connect("db/data.db")
         cur = con.cursor()
-
-        # admin' OR '1'='1' --
+        print(login, password)
+        # admin' AND '1'='1' --
         query = f"SELECT * FROM users WHERE name = '{login}' AND hashed_password = '{password}'"
 
         try:
             cur.execute(query)
             user = cur.fetchone()
-
+            print(cur.fetchall(), query)
             if user:
                 return f"Добро пожаловать, {user[1]}!"
             else:

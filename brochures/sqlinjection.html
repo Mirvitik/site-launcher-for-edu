@@ -22,7 +22,7 @@
             </button>
         </div>
         <div class="card-body bg-dark text-light p-0">
-            <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
+            <pre class="m-0 p-3">
 <code>from data import db_session
 from data.users import User
 from flask import Flask, render_template, request
@@ -39,7 +39,7 @@ def index():
         con = sqlite3.connect('db/data.db')
         cur = con.cursor()
 
-        # admin' OR '1'='1' --
+        # admin' AND '1'='1' --
         query = f"SELECT * FROM users WHERE name = '{login}' AND hashed_password = '{password}'"
 
         try:
@@ -71,7 +71,8 @@ if __name__ == '__main__':
         </div>
     </div>
 </div>
-<p>Для избежания SQL инъекции в своих веб-приложениях необходимо сделать так, чтобы вводимые пользователем данные в форме
+<p>Для избежания SQL инъекции в своих веб-приложениях необходимо сделать так, чтобы вводимые пользователем данные в
+    форме
     обрабатывались, как строки в SQL запросе, а не как часть запроса</p>
 <div class="container mt-5">
     <div class="card border-primary shadow">
@@ -84,7 +85,7 @@ if __name__ == '__main__':
             </button>
         </div>
         <div class="card-body bg-dark text-light p-0">
-            <pre class="m-0 p-3" style="font-family: 'Courier New', monospace;">
+            <pre class="m-0 p-3">
 <code>from data import db_session
 from data.users import User
 from flask import Flask, render_template, request
