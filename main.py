@@ -50,6 +50,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def runserver(self):
         if self.server is not None:
             self.pushButton.setText("Запустить сайт")
+            self.label.setText("Нажмите на кнопку для генерации сайта")
             self.server.terminate()
             self.server = None
         else:
