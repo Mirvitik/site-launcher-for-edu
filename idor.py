@@ -33,7 +33,7 @@ def get_user(id):
 
 @app.route("/api/v1/")
 def api_of_user():
-    return render_template('about_api.html')
+    return render_template("about_api.html")
 
 
 @app.route("/api/user/<id>")
