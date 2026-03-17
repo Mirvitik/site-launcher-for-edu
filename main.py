@@ -22,7 +22,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         self.image = QPixmap("media/image.png")
         self.label_3.setPixmap(self.image)
-        self.setWindowTitle("Генерация сайта с уязвимостью")
+        self.setWindowTitle("Запуск сайта с уязвимостью")
         self.setWindowIcon(QIcon("media/img.png"))
         self.pushButton.clicked.connect(self.runserver)
         self.checkBox.setChecked(True)
