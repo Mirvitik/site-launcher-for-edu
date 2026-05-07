@@ -96,7 +96,7 @@
     <property name="geometry">
      <rect>
       <x>11</x>
-      <y>483</y>
+      <y>480</y>
       <width>317</width>
       <height>20</height>
      </rect>
@@ -152,6 +152,32 @@
     </property>
     <property name="text">
      <string>Изменение порта сайта</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>510</y>
+      <width>311</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сканировать проект</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_2">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>480</y>
+      <width>301</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сохранить рузультаты сканирования</string>
     </property>
    </widget>
   </widget>
